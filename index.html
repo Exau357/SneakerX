@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SneakerX - L'Édition Ardoise Premium</title>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+
+    /* --- L'HABILLAGE GLOBAL (Nouvelle Palette "Ardoise Premium") --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #1a1a1c; /* ARDOISE PROFOND au lieu de Noir */
+      color: #f0f0f0; /* Blanc cassé doux pour le texte principal */
+      font-family: 'Montserrat', sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* --- BANNIÈRE D'ANNONCE --- */
+    .announcement-bar {
+      background: #f0c040; /* OR VIBRANT */
+      color: #000;
+      padding: 8px 10px;
+      text-align: center;
+      font-size: 0.85rem; /* Taille réduite */
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      line-height: 1.3;
+    }
+
+    /* --- HEADER --- */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 50px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(26, 26, 28, 0.85); 
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .logo { 
+      font-size: 28px; 
+      font-weight: 900; 
+      color: #fff; 
+      text-decoration: none; 
+      letter-spacing: 2px; 
+      text-transform: uppercase; 
+    }
+    
+    nav ul { 
+      display: flex; 
+      gap: 40px; 
+      list-style: none;
+      align-items: center; /* Important pour l'alignement de la flèche */
+    }
+    
+    nav a { 
+      color: #a0a0a0; 
+      text-decoration: none; 
+      text-transform: uppercase; 
+      font-size: 13px; 
+      font-weight: 700; 
+      letter-spacing: 1px; 
+      transition: color 0.3s ease; 
+      padding-bottom: 5px;
+    }
+    
+    nav a:hover, nav a.active { 
+      color: #fff; 
+      border-bottom: 2px solid #cc0000; /* Touche rouge au survol/actif */
+    }
+
+    /* --- DROPDOWN MENU CATALOGUE --- */
+    .dropdown { position: relative; padding-bottom: 10px; margin-bottom: -10px; }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #141416;
+      min-width: 180px;
+      box-shadow: 0px 8px 25px rgba(0,0,0,0.8);
+      z-index: 1000;
+      top: 100%;
+      left: -20px;
+      border: 1px solid #333;
+      border-top: 3px solid #cc0000;
+      flex-direction: column;
+      gap: 0;
+      padding: 0;
+      border-radius: 0 0 5px 5px;
+    }
+    .dropdown:hover .dropdown-content { display: flex; }
+    .dropdown-content li { width: 100%; }
+    .dropdown-content a {
+      padding: 15px 20px;
+      display: block;
+      border-bottom: 1px solid #222;
+      font-size: 0.8rem;
+    }
+    .dropdown-content a:hover { background-color: #1a1a1c; color: #cc0000; padding-left: 25px; border-bottom: 1px solid #222; }
+
+
+    main {
+      flex: 1;
+      padding-bottom: 80px;
+    }
+
+    /* --- SECTION HERO --- */
+    .hero-title {
+      text-align: center;
+      font-size: clamp(2.5rem, 6vw, 4rem); /* Responsive typography */
+      font-weight: 900;
+      text-transform: uppercase;
+      margin: 60px 20px 40px 20px;
+      background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+    }
+
+    .hero-section {
+      display: flex;
+      justify-content: center;
+      padding: 0 20px;
+      margin-bottom: 60px;
+    }
+
+    .image-container {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      min-height: 450px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #cc0000, #8B0000); /* Rouge premium */
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      border-radius: 16px;
+      padding: 40px 20px;
+    }
+
+    .shoe-image {
+      max-width: 90%;
+      height: auto;
+      max-height: 350px;
+      object-fit: contain;
+      filter: drop-shadow(0 25px 25px rgba(0,0,0,0.6));
+      margin-bottom: 40px;
+      transition: opacity 0.3s ease, transform 0.4s ease;
+    }
+    
+    .shoe-image:hover {
+        transform: scale(1.05);
+    }
+
+    /* Conteneur des petites icônes - Bien rangé */
+    .product-icons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      width: 100%;
+      padding: 0 10px;
+    }
+
+    .icon {
+      width: 70px;
+      height: 70px;
+      background: #ffffff;
+      border: 3px solid transparent;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .icon img {
+      width: 85%;
+      height: 85%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+
+    .icon:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+    .icon:hover img { transform: scale(1.1); }
+    .icon.active { border-color: #1a1a1c; transform: scale(1.05); } /* Bordure foncée si actif */
+
+    /* --- BANNIERE STATS --- */
+    .premium-banner {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin: 0 auto 80px auto;
+      padding: 40px 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      max-width: 900px;
+    }
+    .stat { text-align: center; color: #a0a0a0; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; min-width: 150px; }
+    .stat span { display: block; font-size: 2rem; font-weight: 900; color: #fff; margin-bottom: 5px; }
+
+    /* --- ZONE MARKET WATCH --- */
+    .market-zone {
+      background: #141416;
+      border: 1px solid #3a3a3d;
+      border-radius: 16px;
+      padding: 40px;
+      max-width: 700px;
+      margin: 0 auto 80px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap; /* Pour le mobile */
+      gap: 30px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    }
+    .market-info h2 { margin: 0 0 10px 0; font-size: 1.3rem; color: #b0b0b0; text-transform: uppercase; letter-spacing: 2px; }
+    .market-info p { margin: 0; font-size: 1rem; color: #fff; font-weight: bold; }
+    
+    .market-price-container { text-align: right; flex-grow: 1; }
+    .live-indicator { color: #00ff88; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-bottom: 5px;}
+    .live-dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; animation: pulse 1.5s infinite; }
+    .price { font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 900; color: #fff; margin: 0; font-variant-numeric: tabular-nums; transition: color 0.3s; line-height: 1;}
+    .trend { color: #00ff88; font-size: 1.1rem; font-weight: bold; margin-top: 5px; }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(0, 255, 136, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+    }
+
+    .market-btn {
+      background: #ffffff;
+      color: #000000;
+      padding: 15px 35px;
+      border: none;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 900;
+      border-radius: 30px;
+      cursor: pointer;
+      text-transform: uppercase;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+    .market-btn:hover { background: #cc0000; color: #ffffff; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(204, 0, 0, 0.3);}
+
+    /* --- INTRO TEXT --- */
+    .intro-text {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .intro-text p { font-size: 1.1rem; color: #a0a0a0; margin-bottom: 25px; }
+    .intro-text strong { color: #ffffff; font-weight: 700; }
+
+
+    /* --- MEGA FOOTER --- */
+    .mega-footer {
+      background: #121214; 
+      border-top: 2px solid #cc0000;
+      padding: 80px 50px 40px 50px;
+      margin-top: auto;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-col h3 { color: #fff; font-size: 1.1rem; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+    .footer-col p { color: #888; font-size: 0.9rem; line-height: 1.8; } 
+    .footer-col ul { list-style: none; padding: 0; margin: 0; }
+    .footer-col ul li { margin-bottom: 12px; }
+    .footer-col ul a { 
+      color: #888; 
+      text-decoration: none; 
+      font-size: 0.9rem; 
+      transition: color 0.3s; 
+    }
+    .footer-col ul a:hover { color: #cc0000; }
+    
+    .newsletter-form { display: flex; margin-top: 20px; flex-wrap: wrap; }
+    .newsletter-form input { flex: 1; min-width: 150px; padding: 12px 15px; border: 1px solid #333; background: #1a1a1c; color: #fff; outline: none; border-radius: 4px 0 0 4px; font-family: 'Montserrat', sans-serif;}
+    .newsletter-form button { padding: 12px 25px; background: #cc0000; color: #fff; border: none; font-weight: 900; cursor: pointer; border-radius: 0 4px 4px 0; transition: background 0.3s; }
+    .newsletter-form button:hover { background: #ff1a1a; }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 60px auto 0 auto;
+      padding-top: 30px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #666; 
+      font-size: 0.85rem;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .payment-icons { font-size: 1.5rem; letter-spacing: 10px; color: #555; }
+
+
+    /* =========================================
+       RÈGLES RESPONSIVES (Mobiles et Tablettes)
+       ========================================= */
+    @media screen and (max-width: 900px) {
+        .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media screen and (max-width: 768px) {
+        .announcement-bar { 
+            font-size: 0.65rem !important; 
+            padding: 6px 5px !important; 
+            line-height: 1.2; 
+        }
+        
+        header { flex-direction: column; padding: 20px; gap: 20px; }
+        nav ul { flex-wrap: wrap; justify-content: center; gap: 20px; }
+        
+        .hero-title { margin-top: 30px; }
+        
+        .image-container { 
+            padding: 30px 15px; 
+            min-height: auto; 
+        }
+        .shoe-image { 
+            margin-bottom: 25px; 
+            max-height: 200px; 
+        }
+        
+        .product-icons { 
+            position: relative !important;
+            right: auto !important;
+            top: auto !important;
+            transform: none !important;
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important; 
+            gap: 10px !important; 
+            justify-content: center !important;
+            width: 100% !important;
+            margin-top: 10px !important;
+        }
+        
+        .icon { 
+            width: 55px !important; 
+            height: 55px !important; 
+            margin: 0 auto !important;
+        }
+
+        .premium-banner { gap: 20px; padding: 20px; justify-content: space-around;}
+        .stat { min-width: 120px; }
+
+        .market-zone { flex-direction: column; text-align: center; padding: 30px 20px; margin-bottom: 60px;}
+        .market-price-container { text-align: center; width: 100%;}
+        .live-indicator { justify-content: center; }
+
+        .footer-grid { grid-template-columns: 1fr; text-align: center; }
+        .footer-bottom { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  
+  <header>
+    <a href="index.html" class="logo">SneakerX</a>
+    <nav>
+      <ul>
+        <li><a href="index.html" class="active">Accueil</a></li>
+        
+        <li class="dropdown">
+          <a href="#" onclick="event.preventDefault()">Catalogue <i class="fas fa-chevron-down" style="font-size: 0.8em; margin-left: 5px;"></i></a>
+          <ul class="dropdown-content">
+            <li><a href="produits.html">Tous les Produits</a></li>
+            <li><a href="produits.html">Mon Panier</a></li>
+          </ul>
+        </li>
+        
+        <li><a href="a-propos.html">Notre Expertise</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1 class="hero-title">L'exception à vos pieds.</h1>
+
+    <div class="hero-section">
+      <div class="image-container">
+        <img id="mainImage" src="fichiers/jordan-brand-nike-air-jordan-13-retro-he-got-game-white-true-red-black-5-removebg-preview.png" alt="Shoe" class="shoe-image">
+        
+        <div class="product-icons">
+          <div class="icon active" data-shoe="1"><img src="fichiers/jordan-brand-nike-air-jordan-13-retro-he-got-game-white-true-red-black-5-removebg-preview.png" alt=""></div>
+          <div class="icon" data-shoe="2"><img src="fichiers/Air-Jordan-4-White-Oreo-GS-Release-Date-removebg-preview.png" alt=""></div>
+          <div class="icon" data-shoe="3"><img src="fichiers/air-jordan-6-retro-reflective-infrared-ci4072-001-removebg-preview.png" alt=""></div>
+          <div class="icon" data-shoe="4"><img src="fichiers/OIP-removebg-preview.png" alt=""></div>
+          <div class="icon" data-shoe="5"><img src="fichiers/Air-Jordan-14-Winterized-Archaeo-Brown-DO9406-200-Release-Date-Price-4-removebg-preview.png" alt=""></div>
+          <div class="icon" data-shoe="6"><img src="fichiers/OIP2-removebg-preview.png" alt=""></div>
+          <div class="icon" data-shoe="7"><img src="fichiers/R-removebg-preview.png" alt=""></div>
+          <div class="icon" data-shoe="8"><img src="fichiers/nike-sb-dunk-restock-day-3-why-so-sad-removebg-preview.png" alt=""></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="premium-banner">
+      <div class="stat"><span>100%</span> Authentique</div>
+      <div class="stat"><span>Grail</span> Sélection Rare</div>
+      <div class="stat"><span>24h</span> Expédition Flash</div>
+    </div>
+
+    <div class="market-zone">
+      <div class="market-info">
+        <h2>📈 Bourse de la Sneaker</h2>
+        <p>Cote moyenne estimée (Dernière vente)</p>
+        <button class="market-btn">Placer une offre</button>
+      </div>
+      <div class="market-price-container">
+        <div class="live-indicator"><div class="live-dot"></div> Live Market</div>
+        <div class="price" id="livePrice">585 €</div>
+        <div class="trend" id="liveTrend">▲ + 4.2% (24h)</div>
+      </div>
+    </div>
+
+    <div class="intro-text">
+      <p>Bienvenue chez <strong>SneakerX</strong>, la galerie en ligne dédiée à l'art de la sneaker. Nous sélectionnons pour vous bien plus que de simples chaussures : nous vous proposons des pièces d'histoire, de design et d'avant-garde.</p>
+      <p>La sneaker a transcendé le monde du sport pour devenir une véritable <strong>œuvre de collection</strong>. Que vous recherchiez une collaboration rare, une édition limitée ou un grand classique revisité, nous identifions et sourçons les modèles les plus convoités à travers le monde.</p>
+      <p>Notre promesse ? <strong>Une authenticité garantie à 100 %</strong>. Chaque paire est rigoureusement expertisée par nos spécialistes, pour vous offrir l'excellence en toute sérénité.</p>
+    </div>
+
+  </main>
+
+  <footer class="mega-footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h3 style="font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; color:#fff;">SNEAKERX</h3>
+        <p>L'adresse de référence pour les collectionneurs et les passionnés de culture urbaine. Authentification garantie par nos experts indépendants.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Assistance</h3>
+        <ul>
+          <li><a href="#">Suivre ma commande</a></li>
+          <li><a href="#">Livraison & Retours</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Processus d'Authentification</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Légal</h3>
+        <ul>
+          <li><a href="#">Conditions Générales</a></li>
+          <li><a href="#">Politique de Confidentialité</a></li>
+          <li><a href="#">Mentions Légales</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Restez Connecté</h3>
+        <p>Inscrivez-vous pour recevoir nos alertes sur les prochains drops exclusifs.</p>
+        <div class="newsletter-form">
+          <input type="email" placeholder="Votre adresse email">
+          <button>→</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2026 SneakerX. L'élégance urbaine. Tous droits réservés.</p>
+      <div class="payment-icons">💳  🅿️</div>
+    </div>
+  </footer>
+
+  <script>
+    // Ton script du Slider
+    const icons = document.querySelectorAll('.icon');
+    const mainImage = document.getElementById('mainImage');
+    const shoeImages = [
+      "fichiers/jordan-brand-nike-air-jordan-13-retro-he-got-game-white-true-red-black-5-removebg-preview.png",
+      "fichiers/Air-Jordan-4-White-Oreo-GS-Release-Date-removebg-preview.png",
+      "fichiers/air-jordan-6-retro-reflective-infrared-ci4072-001-removebg-preview.png",
+      "fichiers/OIP-removebg-preview.png",
+      "fichiers/Air-Jordan-14-Winterized-Archaeo-Brown-DO9406-200-Release-Date-Price-4-removebg-preview.png",
+      "fichiers/OIP2-removebg-preview.png",
+      "fichiers/R-removebg-preview.png",
+      "fichiers/nike-sb-dunk-restock-day-3-why-so-sad-removebg-preview.png"
+    ];
+
+    icons.forEach((icon, index) => {
+      icon.addEventListener('click', () => {
+        document.querySelector('.icon.active').classList.remove('active');
+        icon.classList.add('active');
+        mainImage.src = shoeImages[index];
+      });
+    });
+
+    // Script pour simuler la Bourse en direct
+    let currentPrice = 585;
+    const priceElement = document.getElementById('livePrice');
+    
+    setInterval(() => {
+      const variation = Math.floor(Math.random() * 8) - 2;
+      currentPrice += variation;
+      priceElement.innerText = currentPrice + " €";
+      
+      priceElement.style.color = variation >= 0 ? "#00ff88" : "#ff3b30";
+      setTimeout(() => {
+        priceElement.style.color = "#fff";
+      }, 500);
+    }, 4500);
+  </script>
+</body>
+</html>

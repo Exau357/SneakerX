@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <title>SneakerX - Nos Produits</title>
+  
+  <style>
+    /* 1. Importation de la police */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+
+    /* 2. Style global (Fond Ardoise Profond) */
+    body {
+      background-color: #1a1a1c; 
+      color: #f0f0f0;
+      font-family: 'Montserrat', sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* 3. Le Header (Bordure Rouge) */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px 50px;
+      border-bottom: 2px solid #cc0000;
+      background: rgba(26, 26, 28, 0.85);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-size: 28px; font-weight: 900; color: #fff; text-decoration: none; letter-spacing: 2px; text-transform: uppercase; }
+    nav ul { display: flex; gap: 40px; list-style: none; margin: 0; padding: 0; align-items: center; }
+    nav a { 
+      color: #a0a0a0; 
+      text-decoration: none; 
+      text-transform: uppercase; 
+      font-size: 13px; 
+      font-weight: 700; 
+      letter-spacing: 1px; 
+      transition: color 0.3s ease; 
+    }
+    nav a:hover, nav a.active { color: #fff; }
+
+    /* --- DROPDOWN MENU CATALOGUE --- */
+    .dropdown { position: relative; padding-bottom: 10px; margin-bottom: -10px; }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #141416;
+      min-width: 180px;
+      box-shadow: 0px 8px 25px rgba(0,0,0,0.8);
+      z-index: 1000;
+      top: 100%;
+      left: -20px;
+      border: 1px solid #333;
+      border-top: 3px solid #cc0000;
+      flex-direction: column;
+      gap: 0;
+      padding: 0;
+      border-radius: 0 0 5px 5px;
+    }
+    .dropdown:hover .dropdown-content { display: flex; }
+    .dropdown-content.show-dropdown { display: flex !important; } /* Force l'affichage au clic */
+    
+    .dropdown-content li { width: 100%; }
+    .dropdown-content a {
+      padding: 15px 20px;
+      display: block;
+      border-bottom: 1px solid #222;
+      font-size: 0.8rem;
+    }
+    .dropdown-content a:hover { background-color: #1a1a1c; color: #cc0000; padding-left: 25px; }
+
+    /* --- PANIER LATÉRAL (SIDE CART) --- */
+    .cart-panel {
+      position: fixed; top: 0; right: -450px; width: 400px; max-width: 100vw; height: 100vh;
+      background-color: #141416; box-shadow: -10px 0 30px rgba(0,0,0,0.8); z-index: 3000;
+      transition: right 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      display: flex; flex-direction: column; border-left: 2px solid #cc0000;
+    }
+    .cart-panel.open { right: 0; }
+    
+    .cart-header { padding: 25px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #333; background: #1a1a1c; }
+    .cart-header h3 { color: #fff; margin: 0; text-transform: uppercase; font-size: 1.2rem; letter-spacing: 1px; flex: 1; text-align: center;}
+    
+    /* LA FLÈCHE EST MAINTENANT BLANCHE (#fff) */
+    .close-cart { background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; transition: 0.3s;}
+    .close-cart:hover { color: #cc0000; transform: translateX(-5px); }
+    
+    .cart-items { flex: 1; overflow-y: auto; padding: 25px; display: flex; flex-direction: column; gap: 15px; }
+    .empty-cart { text-align: center; color: #a0a0a0; font-style: italic; margin-top: 50px; }
+    
+    .cart-item { display: flex; align-items: center; gap: 15px; background: #1a1a1c; padding: 15px; border-radius: 8px; border: 1px solid #333; position: relative;}
+    .cart-item img { width: 70px; height: 70px; object-fit: contain; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));}
+    .cart-item-details { flex: 1; }
+    .cart-item-title { color: #fff; font-weight: 700; font-size: 0.9rem; margin-bottom: 5px; line-height: 1.2;}
+    .cart-item-price { color: #cc0000; font-weight: 900; font-size: 1.1rem;}
+    
+    /* Boutons de quantité + et - */
+    .qty-controls { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+    .qty-btn { background: #333; color: #fff; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+    .qty-btn:hover { background: #cc0000; }
+    .cart-item-qty { color: #fff; font-size: 0.9rem; font-weight: bold; width: 20px; text-align: center; }
+    
+    .remove-item { position: absolute; right: 15px; top: 15px; background: transparent; border: none; color: #666; cursor: pointer; transition: 0.3s; font-size: 1.1rem;}
+    .remove-item:hover { color: #cc0000; }
+
+    .cart-footer { padding: 30px; background: #1a1a1c; border-top: 1px solid #333; }
+    
+    /* Bouton vider le panier BIEN VISIBLE */
+    .clear-cart-btn {
+      background: rgba(204, 0, 0, 0.1); 
+      color: #ff4d4d; 
+      border: 1px solid #cc0000; 
+      border-radius: 5px;
+      padding: 12px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem; 
+      font-weight: 700;
+      text-transform: uppercase; 
+      cursor: pointer; 
+      display: flex; 
+      align-items: center;
+      justify-content: center; 
+      gap: 8px; 
+      width: 100%; 
+      margin-bottom: 20px; 
+      transition: all 0.3s;
+    }
+    .clear-cart-btn:hover { background: #cc0000; color: #fff; box-shadow: 0 4px 10px rgba(204, 0, 0, 0.4); }
+
+    .cart-total { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; font-weight: 900; color: #fff; }
+    .cart-total span:first-child { font-size: 1.2rem; color: #a0a0a0; text-transform: uppercase;}
+    .cart-total span:last-child { color: #cc0000; font-size: 2.5rem; line-height: 1;}
+    .checkout-btn { width: 100%; background: #cc0000; color: #fff; border: none; padding: 18px; font-size: 1.1rem; font-weight: 900; text-transform: uppercase; cursor: pointer; transition: 0.3s; letter-spacing: 2px;}
+    .checkout-btn:hover { background: #fff; color: #cc0000; }
+
+    /* Le fond assombri quand le panier est ouvert */
+    .cart-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2999; display: none; backdrop-filter: blur(5px);
+    }
+    .cart-overlay.show { display: block; }
+
+
+    /* --- LES BOUTONS DE MARQUES --- */
+    .brands-nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 60px 0 40px 0;
+    }
+    .brand-banner {
+      background: #141416;
+      border: 2px solid #333;
+      color: #a0a0a0;
+      padding: 12px 30px;
+      border-radius: 0px; 
+      cursor: pointer;
+      font-weight: 700;
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+    .brand-jordan:hover, .brand-jordan.active { background: #cc0000; color: #fff; border-color: #cc0000; }
+    .brand-nike:hover, .brand-nike.active { background: #ff6600; color: #fff; border-color: #ff6600; }
+    .brand-adidas:hover, .brand-adidas.active { background: #0073e6; color: #fff; border-color: #0073e6; }
+    .brand-curry:hover, .brand-curry.active { background: #f0c040; color: #000; border-color: #f0c040; }
+
+    /* --- LE FAMEUX SYSTÈME D'ONGLETS --- */
+    .brand-section {
+      display: none; 
+      max-width: 1200px;
+      margin: 0 auto 80px auto;
+      padding: 0 30px;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+    .brand-section.show { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .brand-section h2 {
+      font-size: 2rem;
+      color: #fff;
+      margin-bottom: 40px;
+      border-left: 5px solid #cc0000; 
+      padding-left: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 40px;
+    }
+
+    /* --- CARTE PRODUIT --- */
+    .product-card {
+      background: #141416;
+      border: 2px solid #333;
+      border-radius: 0px; 
+      padding: 40px 30px;
+      text-align: center;
+      transition: all 0.4s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-10px);
+      border-color: #cc0000; 
+      box-shadow: 0 15px 30px rgba(204, 0, 0, 0.3); 
+    }
+    
+    .product-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: contain;
+      margin-bottom: 25px;
+      filter: drop-shadow(0 15px 15px rgba(0,0,0,0.6));
+      transition: transform 0.4s ease;
+    }
+    .product-card:hover img { transform: scale(1.08); }
+
+    .product-card h3 { font-size: 1.3rem; color: #fff; margin: 0 0 10px 0; font-weight: 700; }
+    .price { font-size: 1.6rem; color: #f0f0f0; font-weight: 900; margin: 0 0 25px 0; }
+    
+    .product-card button {
+      width: 100%; background: #cc0000; border: none; color: #fff; padding: 15px;
+      border-radius: 0px; font-family: 'Montserrat', sans-serif; font-size: 1rem;
+      font-weight: 900; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s;
+    }
+    .product-card:hover button { background: #fff; color: #cc0000; }
+
+    /* --- LE MEGA FOOTER --- */
+    .mega-footer {
+      background: #18181a;
+      border-top: 2px solid #cc0000; 
+      padding: 80px 50px 40px 50px;
+      margin-top: 50px;
+    }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 40px; max-width: 1200px; margin: 0 auto; }
+    .footer-col h3 { color: #fff; font-size: 1.2rem; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+    .footer-col p { color: #999; font-size: 0.95rem; line-height: 1.8; }
+    .footer-col ul { list-style: none; padding: 0; margin: 0; }
+    .footer-col ul li { margin-bottom: 12px; }
+    .footer-col ul a { color: #999; text-decoration: none; font-size: 0.95rem; transition: color 0.3s; }
+    .footer-col ul a:hover { color: #cc0000; } 
+    
+    .newsletter-form { display: flex; margin-top: 20px; }
+    .newsletter-form input { flex: 1; padding: 12px 15px; border: 1px solid #444; background: #1a1a1c; color: #fff; outline: none; border-radius: 0px; }
+    .newsletter-form button { padding: 12px 20px; background: #cc0000; color: #fff; border: none; font-weight: bold; cursor: pointer; border-radius: 0px; transition: background 0.3s; }
+    .newsletter-form button:hover { background: #fff; color: #cc0000; }
+
+    .footer-bottom {
+      max-width: 1200px; margin: 60px auto 0 auto; padding-top: 30px; border-top: 1px solid #333;
+      display: flex; justify-content: space-between; align-items: center; color: #777; font-size: 0.9rem;
+    }
+    .payment-icons { font-size: 1.5rem; letter-spacing: 10px; color: #cc0000; } 
+
+    /* =========================================
+       RÈGLES RESPONSIVES (Mobiles et Tablettes)
+       ========================================= */
+    @media screen and (max-width: 900px) {
+        .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media screen and (max-width: 768px) {
+        header { flex-direction: column; padding: 20px; gap: 20px; }
+        nav ul { flex-wrap: wrap; justify-content: center; gap: 20px; }
+        
+        .dropdown-content {
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            min-width: 200px;
+        }
+        .dropdown-content a:hover { padding-left: 20px; }
+
+        /* Ajustement de la section pour frôler les bords */
+        .brand-section {
+            padding: 0 15px !important; 
+        }
+
+        /* --- CORRECTION LARGEUR MAXIMALE POUR MOBILE --- */
+        .product-grid {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important; /* Force l'étirement total */
+            width: 100% !important; 
+            gap: 20px !important; 
+            margin: 0 !important;
+        }
+        
+        /* CARTES MOINS LONGUES ET 100% LARGES */
+        .product-card {
+            width: 100% !important;
+            max-width: 100% !important; /* DÉTRUIT TOUTE LIMITE DE LARGEUR */
+            padding: 20px 15px !important; /* Réduit drastiquement l'espace vide interne */
+            margin: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+        .product-card img {
+            width: 100% !important;
+            height: 180px !important; /* Image beaucoup moins haute = carte moins longue */
+            object-fit: contain !important;
+            margin-bottom: 15px !important;
+        }
+        
+        .product-card h3 { font-size: 1.2rem !important; margin-bottom: 5px !important; }
+        .price { font-size: 1.3rem !important; margin-bottom: 15px !important; }
+        .product-card button { padding: 12px !important; } /* Bouton légèrement plus fin */
+
+        .footer-grid { grid-template-columns: 1fr; text-align: center; }
+        .footer-bottom { flex-direction: column; text-align: center; gap: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="index.html" class="logo">SneakerX</a>
+    <nav>
+      <ul>
+        <li><a href="index.html">Accueil</a></li>
+        <li class="dropdown">
+          <a href="#" class="active" onclick="toggleDropdown(event)">Catalogue <i class="fas fa-chevron-down" style="font-size: 0.8em; margin-left: 5px;"></i></a>
+          <ul class="dropdown-content">
+            <li><a href="produits.html" class="active">Tous les Produits</a></li>
+            <li><a href="#" onclick="toggleCart(event)"><i class="fas fa-shopping-cart" style="margin-right: 8px;"></i> Mon Panier (<span id="cart-count">0</span>)</a></li>
+          </ul>
+        </li>
+        <li><a href="a-propos.html">Notre Expertise</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <div class="cart-panel" id="cartPanel">
+    <div class="cart-header">
+      <button class="close-cart" onclick="toggleCart()"><i class="fas fa-arrow-left"></i></button>
+      <h3>Votre Panier</h3>
+      <div style="width: 24px;"></div> </div>
+    
+    <div class="cart-items" id="cartItems">
+      <p class="empty-cart">Votre panier est actuellement vide.</p>
+    </div>
+    
+    <div class="cart-footer">
+      <button class="clear-cart-btn" id="clearCartBtn" onclick="clearCart()" style="display: none;">
+        <i class="fas fa-trash-alt"></i> Vider tout le panier
+      </button>
+      
+      <div class="cart-total">
+        <span>Total TTC</span>
+        <span id="cartTotal">0 €</span>
+      </div>
+      <button class="checkout-btn">Commander</button>
+    </div>
+  </div>
+
+  <main>
+    <div class="brands-nav">
+      <button class="brand-banner brand-jordan active" onclick="filterBrands('cat-jordan', this)">Jordan</button>
+      <button class="brand-banner brand-nike" onclick="filterBrands('cat-nike', this)">Nike</button>
+      <button class="brand-banner brand-adidas" onclick="filterBrands('cat-adidas', this)">Adidas</button>
+      <button class="brand-banner brand-curry" onclick="filterBrands('cat-curry', this)">Curry Brand</button>
+    </div>
+
+    <section class="brand-section cat-jordan show">
+      <h2>Air Jordan</h2>
+      <div class="product-grid">
+        <div class="product-card">
+          <img src="https://sneakernews.com/wp-content/uploads/2022/12/air-jordan-1-mid-black-red-DQ8426-106-3.jpg" alt="Jordan 1">
+          <h3>Jordan 1</h3>
+          <p class="price">210 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div>
+        <div class="product-card">
+          <img src="https://www.basketsession.com/statics/uploads/2023/02/air-jordan-3-reimagined-official-images-DN3707-100-1.webp" alt="Jordan 3">
+          <h3>Jordan 3</h3>
+          <p class="price">190 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div>
+        <div class="product-card">
+          <img src="https://sneakernews.com/wp-content/uploads/2021/04/air-jordan-4-tech-grey-official-photos-CT8527-100-1.jpg" alt="Jordan 4">
+          <h3>Jordan 4</h3>
+          <p class="price">270 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div>
+        <div class="product-card">
+          <img src="https://i.pinimg.com/originals/41/82/de/4182de6b1a4bde17539e631cc79b8210.jpg" alt="Jordan 6">
+          <h3>Jordan 6</h3>
+          <p class="price">250 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div>
+        <div class="product-card">
+          <img src="https://i.pinimg.com/originals/02/9e/6b/029e6bf52d2c4921134b544bf686e12c.jpg" alt="Jordan 9">
+          <h3>Jordan 9</h3>
+          <p class="price">220 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div>
+        <div class="product-card">
+          <img src="https://img.buzzfeed.com/buzzfeed-static/complex/images/Y19jcm9wLGhfMTA4Nix3XzE5MzAseF8zNCx5XzU4OA==/gkjbreeeyn0q61v7iiii/air-jordan-11-varsity-red-ct8012-116-pair.jpg?output-format=jpg&output-quality=auto" alt="Jordan 11">
+          <h3>Jordan 11</h3>
+          <p class="price">290 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div>
+      </div> 
+    </section>
+
+    <section class="brand-section cat-nike">
+      <h2>Nike & Nike SB</h2>
+      <div class="product-grid">
+        <div class="product-card">
+          <img src="https://i.pinimg.com/originals/8d/d6/17/8dd6178c63be8451a8bc4c702e36f7d9.jpg" alt="Air Force 1">
+          <h3>Air Force 1</h3>
+          <p class="price">150 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div>
+        <div class="product-card">
+          <img src="https://sneakerbardetroit.com/wp-content/uploads/2024/02/Nike-Air-Max-Plus-Drift-White-Black-FV4081-102-4-1068x762.jpeg" alt="Nike Air Max Drift">
+          <h3>Nike Air Max Drift</h3>
+          <p class="price">130 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div>
+        <div class="product-card">
+          <img src="https://tse2.mm.bing.net/th/id/OIP.8pp3_A50hC7B3J5mIrbkeQHaFM?rs=1&pid=ImgDetMain&o=7&rm=3" alt="Nike Air More Uptempo">
+          <h3>Nike Air More Uptempo</h3>
+          <p class="price">300 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div>
+        <div class="product-card">
+          <img src="https://th.bing.com/th/id/R.5c83cd3c43523004aaebb198193adf0d?rik=%2bfNClK1zk6s7pw&riu=http%3a%2f%2fnaturellecomm.fr%2fblog%2fvert%2fair-max-95-gris-jaune-fluo-zscztzsvpv.jpg&ehk=s8phtbxsgBix9el33x7BLVd33bttBs9clvUXUZzCgfM%3d&risl=&pid=ImgRaw&r=0" alt="Air Max 95">
+          <h3>Air Max 95</h3>
+          <p class="price">230 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div>
+        <div class="product-card">
+          <img src="https://4.bp.blogspot.com/-O83CBFKqbbI/U71_F1He0wI/AAAAAAAABTs/DPc3Ps5PGU8/s1600/Nike+Tn+2014+0007---1.jpg" alt="Nike TN Requin">
+          <h3>Nike TN Requin</h3>
+          <p class="price">130 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div>
+        <div class="product-card">
+          <img src="https://sneakerbardetroit.com/wp-content/uploads/2022/10/Nike-Air-Force-1-Mid-Brown-Plaid-DV0792-100-Release-Date-4.jpeg" alt="Nike Air Force Brown">
+          <h3>Nike Air Force Brown</h3>
+          <p class="price">150 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="brand-section cat-adidas">
+      <h2>Adidas</h2>
+      <div class="product-grid">
+        <div class="product-card">
+          <img src="https://assets.adidas.com/images/w_1880,f_auto,q_auto/3655245f848f466294bcaf630117ef1f_9366/HQ6507_04_standard.jpg" alt="Addidas Campus Grey">
+          <h3>Adidas Campus Grey</h3>
+          <p class="price">150 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div> 
+        <div class="product-card">
+          <img src="https://assets.adidas.com/images/w_1880,f_auto,q_auto/3655245f848f466294bcaf630117ef1f_9366/HQ6507_04_standard.jpg" alt="Addidas Campus Grey">
+          <h3>Adidas Campus 00s</h3>
+          <p class="price">110 €</p>
+          <button class="add-to-cart-btn">Ajouter au panier</button>
+        </div> 
+      </div>
+    </section>
+
+    <section class="brand-section cat-curry">
+      <h2>Curry Brand</h2>
+      <p style="text-align: center; color: #888; margin-top: 50px; font-size: 1.2rem;">Aucun produit Curry disponible pour le moment.</p>
+    </section>
+
+  </main>
+  
+  <footer class="mega-footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h3 style="font-size: 1.8rem; font-weight: 900; letter-spacing: 2px;">SNEAKERX</h3>
+        <p>L'adresse de référence pour les collectionneurs et les passionnés de culture urbaine. Authentification garantie par nos experts indépendants.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Assistance</h3>
+        <ul>
+          <li><a href="#">Suivre ma commande</a></li>
+          <li><a href="#">Livraison & Retours</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Processus d'Authentification</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Légal</h3>
+        <ul>
+          <li><a href="#">Conditions Générales</a></li>
+          <li><a href="#">Politique de Confidentialité</a></li>
+          <li><a href="#">Mentions Légales</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Restez Connecté</h3>
+        <p>Inscrivez-vous pour recevoir nos alertes sur les prochains drops exclusifs.</p>
+        <div class="newsletter-form">
+          <input type="email" placeholder="Votre adresse email">
+          <button>→</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>© 2026 SneakerX. L'élégance urbaine. Tous droits réservés.</p>
+      <div class="payment-icons">💳  🅿️</div>
+    </div>
+  </footer>
+
+  <script>
+    // --- GESTION DU MENU DÉROULANT AU CLIC ---
+    function toggleDropdown(e) {
+        e.preventDefault();
+        document.querySelector('.dropdown-content').classList.toggle('show-dropdown');
+    }
+
+    // Fermer le menu si on clique en dehors
+    window.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            const dropdown = document.querySelector('.dropdown-content');
+            if(dropdown) dropdown.classList.remove('show-dropdown');
+        }
+    });
+
+    // --- GESTION DES ONGLETS DE MARQUES ---
+    function filterBrands(category, btnElement) {
+        const sections = document.querySelectorAll('.brand-section');
+        const btns = document.querySelectorAll('.brand-banner');
+
+        btns.forEach(btn => btn.classList.remove('active'));
+        if (btnElement) btnElement.classList.add('active');
+
+        sections.forEach(sec => {
+            if (sec.classList.contains(category)) {
+                sec.classList.add('show');
+            } else {
+                sec.classList.remove('show');
+            }
+        });
+    }
+
+    // --- GESTION DU PANIER (LOGIQUE & UI) ---
+    let cart = [];
+
+    // Ouvre/Ferme le menu latéral
+    function toggleCart(e) {
+        if(e) e.preventDefault();
+        document.getElementById('cartPanel').classList.toggle('open');
+        document.getElementById('cartOverlay').classList.toggle('show');
+        // Ferme le menu déroulant si on ouvre le panier via celui-ci
+        document.querySelector('.dropdown-content').classList.remove('show-dropdown');
+    }
+
+    // Fonction pour ajouter un produit
+    function addToCart(name, priceStr, imgPath) {
+        const price = parseInt(priceStr.replace('€', '').trim());
+
+        const existingItem = cart.find(item => item.name === name);
+        if(existingItem) {
+            existingItem.qty++;
+        } else {
+            cart.push({ name: name, price: price, image: imgPath, qty: 1 });
+        }
+
+        updateCartUI();
+        toggleCart();
+    }
+
+    // Fonction pour diminuer la quantité (retirer un seul article)
+    function decreaseQty(index) {
+        if (cart[index].qty > 1) {
+            cart[index].qty--;
+        } else {
+            cart.splice(index, 1); 
+        }
+        updateCartUI();
+    }
+
+    // Fonction pour augmenter la quantité
+    function increaseQty(index) {
+        cart[index].qty++;
+        updateCartUI();
+    }
+
+    // Fonction pour retirer toute la ligne de l'article (la poubelle)
+    function removeFromCart(index) {
+        cart.splice(index, 1);
+        updateCartUI();
+    }
+
+    // Fonction pour vider tout le panier
+    function clearCart() {
+        cart = [];
+        updateCartUI();
+    }
+
+    // Met à jour l'affichage du panier (Total, Liste, Compteur)
+    function updateCartUI() {
+        const cartItemsContainer = document.getElementById('cartItems');
+        const cartTotalEl = document.getElementById('cartTotal');
+        const cartCountEl = document.getElementById('cart-count');
+        const clearCartBtn = document.getElementById('clearCartBtn');
+
+        cartItemsContainer.innerHTML = '';
+        let total = 0;
+        let totalItems = 0;
+
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = '<p class="empty-cart">Votre panier est actuellement vide.</p>';
+            clearCartBtn.style.display = 'none'; 
+        } else {
+            clearCartBtn.style.display = 'flex'; 
+            cart.forEach((item, index) => {
+                total += item.price * item.qty;
+                totalItems += item.qty;
+
+                // Création du HTML pour l'article (avec boutons + et -)
+                const itemHTML = `
+                    <div class="cart-item">
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="cart-item-details">
+                            <div class="cart-item-title">${item.name}</div>
+                            <div class="cart-item-price">${item.price} €</div>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="decreaseQty(${index})">-</button>
+                                <span class="cart-item-qty">${item.qty}</span>
+                                <button class="qty-btn" onclick="increaseQty(${index})">+</button>
+                            </div>
+                        </div>
+                        <button class="remove-item" onclick="removeFromCart(${index})" title="Supprimer cet article"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                cartItemsContainer.insertAdjacentHTML('beforeend', itemHTML);
+            });
+        }
+
+        // Mise à jour des chiffres
+        cartTotalEl.innerText = total + ' €';
+        cartCountEl.innerText = totalItems;
+    }
+
+    // Attacher les clics sur tous les boutons "Ajouter au panier"
+    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const card = this.closest('.product-card');
+            const name = card.querySelector('h3').innerText;
+            const price = card.querySelector('.price').innerText;
+            const img = card.querySelector('img').src;
+
+            addToCart(name, price, img);
+        });
+    });
+
+  </script>
+
+</body>
+</html>
